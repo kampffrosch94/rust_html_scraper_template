@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use reqwest::blocking::*;
 use reqwest::cookie::Jar;
 
@@ -25,8 +25,13 @@ fn main() -> Result<()> {
 
     // parse the answer
     let document = scraper::Html::parse_document(&body);
-    eprintln!("document = {:#?}", document);
-    // TODO do something with the result
+    let selector = scraper::Selector::parse(r#"img[src*="chapter"]"#) // TODO css selector
+        .map_err(|e| anyhow!("{e:?}"))?;
+    let selected = document.select(&selector);
+    for _element in selected {
+        // TODO do something with the result
+        // for example element.value().attr("src")
+    }
 
     Ok(())
 }
